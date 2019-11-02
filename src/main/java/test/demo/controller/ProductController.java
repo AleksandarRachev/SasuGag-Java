@@ -36,4 +36,9 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(page - 1));
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getProductsCount(){
+        return ResponseEntity.ok(productService.getProductsCount());
+    }
+
 }

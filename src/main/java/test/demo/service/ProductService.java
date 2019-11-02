@@ -32,6 +32,10 @@ public class ProductService {
         this.modelMapper = modelMapper;
     }
 
+    public int getProductsCount(){
+        return productRepository.findAll().size();
+    }
+
     private void validateProduct(String name) throws ElementExistsException {
         Optional<Product> product = productRepository.findByName(name);
         if(product.isPresent()){
@@ -48,7 +52,7 @@ public class ProductService {
     }
 
     public List<ProductRespnse> getAllProducts(int page) {
-        return productRepository.findAll(PageRequest.of(page, 10))
+        return productRepository.findAll(PageRequest.of(page, 5))
                 .stream()
                 .map(product -> modelMapper.map(product, ProductRespnse.class))
                 .collect(Collectors.toList());
