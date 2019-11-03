@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductRespnse {
+public class ProductResponse {
 
     private String uid;
 
     private String name;
+
+    private String categoryName;
 
 }

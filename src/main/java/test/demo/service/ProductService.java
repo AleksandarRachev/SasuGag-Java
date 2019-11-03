@@ -11,8 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.multipart.MultipartFile;
-import test.demo.dto.ProductSaveRequest;
-import test.demo.dto.ProductRespnse;
+import test.demo.dto.ProductResponse;
+import test.demo.entity.Category;
 import test.demo.entity.Product;
 import test.demo.exception.ElementExistsException;
 import test.demo.exception.ElementMissingException;
@@ -26,14 +26,21 @@ public class ProductService {
 
     private final ModelMapper modelMapper;
 
+    private final CategoryService categoryService;
+
     @Autowired
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper) {
+    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, CategoryService categoryService) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
+        this.categoryService = categoryService;
     }
 
     public int getProductsCount(){
         return productRepository.findAll().size();
+    }
+
+    public int getProductCountByCategoryName(String categoryName){
+        return productRepository.findAllByCategoryName(categoryName).size();
     }
 
     private void validateProduct(String name) throws ElementExistsException {
@@ -43,18 +50,27 @@ public class ProductService {
         }
     }
 
-    public ProductSaveRequest saveProduct(MultipartFile image, String name) throws ElementExistsException, IOException {
+    public ProductResponse saveProduct(MultipartFile image, String name, String categoryName) throws ElementExistsException, IOException {
         validateProduct(name);
+        Category category = categoryService.getCategory(categoryName);
         Product product = new Product();
         product.setName(name);
         product.setImage(image.getBytes());
-        return modelMapper.map(productRepository.save(product), ProductSaveRequest.class);
+        product.setCategory(category);
+        return modelMapper.map(productRepository.save(product), ProductResponse.class);
     }
 
-    public List<ProductRespnse> getAllProducts(int page) {
+    public List<ProductResponse> getAllProducts(int page) {
         return productRepository.findAll(PageRequest.of(page, 5))
                 .stream()
-                .map(product -> modelMapper.map(product, ProductRespnse.class))
+                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> getAllProductsByCategory(int page, String category){
+        return productRepository.findAllByCategoryName(PageRequest.of(page, 5), category)
+                .stream()
+                .map(product -> modelMapper.map(product, ProductResponse.class))
                 .collect(Collectors.toList());
     }
 

@@ -1,15 +1,17 @@
 package test.demo.entity;
 
-import javax.persistence.*;
-
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.Data;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "products")
-public class Product {
+@Table(name = "categories")
+public class Category {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -17,11 +19,5 @@ public class Product {
     private String uid;
 
     private String name;
-
-    @Lob
-    private byte[] image;
-
-    @OneToOne
-    private Category category;
 
 }

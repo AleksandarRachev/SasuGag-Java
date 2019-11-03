@@ -14,7 +14,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ConstraintViolationException.class, ElementExistsException.class})
+    @ExceptionHandler({ConstraintViolationException.class, ElementExistsException.class, ElementMissingException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorMessage> handleBadRequest(Exception e) {
         return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
