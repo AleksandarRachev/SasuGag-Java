@@ -29,7 +29,8 @@ public class ProductController {
         return ResponseEntity.ok(productService.saveProduct(image, name, categoryName));
     }
 
-    @GetMapping(value = "/{productId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/image/{productId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @PreAuthorize("permitAll()")
     public ResponseEntity<byte[]> downloadImage(@PathVariable(value = "productId") String productId) {
         return ResponseEntity.ok(productService.downloadImage(productId));
     }

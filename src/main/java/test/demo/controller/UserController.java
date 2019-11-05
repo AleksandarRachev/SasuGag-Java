@@ -21,6 +21,7 @@ import test.demo.service.UserService;
 @RestController
 @RequestMapping("/users")
 @CrossOrigin("*")
+@PreAuthorize("permitAll()")
 public class UserController {
 
     @Autowired
