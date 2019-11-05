@@ -11,71 +11,80 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.multipart.MultipartFile;
-import test.demo.dto.ProductResponse;
+import test.demo.dto.PostResponse;
 import test.demo.entity.Category;
 import test.demo.entity.Post;
+import test.demo.entity.User;
 import test.demo.exception.ElementExistsException;
 import test.demo.exception.ElementMissingException;
 import test.demo.exception.ImageMissingException;
-import test.demo.repository.ProductRepository;
+import test.demo.repository.PostRepository;
 
 @Service
-public class ProductService {
+public class PostService {
 
-    private final ProductRepository productRepository;
+    private final PostRepository postRepository;
 
     private final ModelMapper modelMapper;
 
     private final CategoryService categoryService;
 
+    private final UserService userService;
+
     @Autowired
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, CategoryService categoryService) {
-        this.productRepository = productRepository;
+    public PostService(PostRepository postRepository, ModelMapper modelMapper, CategoryService categoryService,
+                       UserService userService) {
+        this.postRepository = postRepository;
         this.modelMapper = modelMapper;
         this.categoryService = categoryService;
+        this.userService = userService;
     }
 
     public int getProductsCount(){
-        return productRepository.findAll().size();
+        return postRepository.findAll().size();
     }
 
     public int getProductCountByCategoryName(String categoryName){
-        return productRepository.findAllByCategoryName(categoryName).size();
+        return postRepository.findAllByCategoryName(categoryName).size();
     }
 
     private void validateProduct(String name) throws ElementExistsException {
-        Optional<Post> product = productRepository.findByName(name);
+        Optional<Post> product = postRepository.findByName(name);
         if(product.isPresent()){
             throw new ElementExistsException("Element with that name already exists");
         }
     }
 
-    public ProductResponse saveProduct(MultipartFile image, String name, String categoryName) throws ElementExistsException, IOException {
+    public PostResponse savePost(MultipartFile image, String name, String categoryName, String userId) throws ElementExistsException, IOException {
         validateProduct(name);
         Category category = categoryService.getCategory(categoryName);
         Post post = new Post();
         post.setName(name);
         post.setImage(image.getBytes());
         post.setCategory(category);
-        return modelMapper.map(productRepository.save(post), ProductResponse.class);
+
+        User user = userService.getById(userId);
+        post.setUser(user);
+
+        return modelMapper.map(postRepository.save(post), PostResponse.class);
     }
 
-    public List<ProductResponse> getAllProducts(int page) {
-        return productRepository.findAll(PageRequest.of(page, 5))
+    public List<PostResponse> getAllPosts(int page) {
+        return postRepository.findAll(PageRequest.of(page, 5))
                 .stream()
-                .map(post -> modelMapper.map(post, ProductResponse.class))
+                .map(post -> modelMapper.map(post, PostResponse.class))
                 .collect(Collectors.toList());
     }
 
-    public List<ProductResponse> getAllProductsByCategory(int page, String category){
-        return productRepository.findAllByCategoryName(PageRequest.of(page, 5), category)
+    public List<PostResponse> getAllProductsByCategory(int page, String category){
+        return postRepository.findAllByCategoryName(PageRequest.of(page, 5), category)
                 .stream()
-                .map(post -> modelMapper.map(post, ProductResponse.class))
+                .map(post -> modelMapper.map(post, PostResponse.class))
                 .collect(Collectors.toList());
     }
 
     private Post getProduct(String id){
-        Optional<Post> product = productRepository.findById(id);
+        Optional<Post> product = postRepository.findById(id);
         if(product.isEmpty()){
             throw new ElementMissingException("No such product");
         }

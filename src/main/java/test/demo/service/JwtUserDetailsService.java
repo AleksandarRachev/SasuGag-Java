@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import test.demo.exception.WrongCredentialsException;
 import test.demo.repository.UserRepository;
 
 @Service
@@ -26,7 +27,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        test.demo.entity.User user = userRepository.findByEmail(username).orElseThrow(() -> new BadCredentialsException("Wrong credentials"));
+        test.demo.entity.User user = userRepository.findByEmail(username).orElseThrow(WrongCredentialsException::new);
         return new User(user.getEmail(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(ROLE_PREFIX + user.getRole().name())));
     }
 }

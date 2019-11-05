@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import test.demo.entity.Post;
 
-public interface ProductRepository extends JpaRepository<Post, String> {
+public interface PostRepository extends JpaRepository<Post, String> {
 
 
     Optional<Post> findByName(String name);

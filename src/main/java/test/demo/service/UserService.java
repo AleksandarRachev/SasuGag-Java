@@ -1,15 +1,12 @@
 package test.demo.service;
 
-import java.util.Optional;
-
+import io.jsonwebtoken.ExpiredJwtException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.ExpiredJwtException;
 import test.demo.config.JwtTokenUtil;
 import test.demo.dto.RegisterUserRequest;
 import test.demo.dto.UserLoginRequest;
@@ -22,8 +19,12 @@ import test.demo.exception.ElementMissingException;
 import test.demo.exception.TokenExpiredException;
 import test.demo.repository.UserRepository;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
+
+    private static final String USER_NOT_FOUND = "User not found";
 
     private final UserRepository userRepository;
 
@@ -45,19 +46,25 @@ public class UserService {
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    public User getUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(() -> new ElementMissingException("User not found"));
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ElementMissingException(USER_NOT_FOUND));
     }
 
-    private void validateRegisterUser(String email){
-        Optional<User> user = userRepository.findByEmail(email);
-        if(user.isPresent()){
-            throw new ElementExistsException("User already registered");
+    public User getById(String id) {
+        return userRepository.findById(id).orElseThrow(() -> new ElementMissingException(USER_NOT_FOUND));
+    }
+
+    private void validateRegisterUser(RegisterUserRequest registerUserRequest) {
+        if (userRepository.findByEmail(registerUserRequest.getEmail()).isPresent()) {
+            throw new ElementExistsException("Email taken");
+        }
+        if(userRepository.findByUsername(registerUserRequest.getUsername()).isPresent()){
+            throw new ElementExistsException("Username taken");
         }
     }
 
-    public UserResponse registerUser(RegisterUserRequest registerUserRequest){
-        validateRegisterUser(registerUserRequest.getEmail());
+    public UserResponse registerUser(RegisterUserRequest registerUserRequest) {
+        validateRegisterUser(registerUserRequest);
         User user = modelMapper.map(registerUserRequest, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
@@ -75,7 +82,7 @@ public class UserService {
         final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         User user = getUserByEmail(authenticationRequest.getEmail());
         if (user == null) {
-            throw new ElementMissingException("User not found");
+            throw new ElementMissingException(USER_NOT_FOUND);
         }
 
         try {
@@ -85,7 +92,7 @@ public class UserService {
         }
 
         UserResponse userLogin = new UserResponse(user.getUid(),
-                user.getEmail(),user.getRole());
+                user.getEmail(), user.getUsername(), user.getRole());
         return new UserLoginResponse(jwtTokenUtil.generateToken(userDetails), userLogin);
     }
 }

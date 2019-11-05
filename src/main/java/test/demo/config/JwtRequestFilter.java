@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,16 +44,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        if (isPathPermitted(request)) {
-            chain.doFilter(request, response);
-        } else {
+        if (isPathNotPermitted(request)) {
             final String requestTokenHeader = request.getHeader("Authorization");
-
             if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
                 tryAcquiringAccessToken(request, response, chain, requestTokenHeader);
             } else {
                 forbiddenResponse(response, "Token missing");
             }
+        } else {
+            chain.doFilter(request, response);
         }
     }
 
@@ -77,30 +77,30 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
 
             chain.doFilter(request, response);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | MalformedJwtException e) {
             forbiddenResponse(response, "Unable to get token");
         } catch (ExpiredJwtException e) {
             forbiddenResponse(response, "Token expired");
         }
     }
 
-    void forbiddenResponse(HttpServletResponse response, String message) throws IOException {
+    private void forbiddenResponse(HttpServletResponse response, String message) throws IOException {
         log.error(message);
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json");
         response.getWriter().write(new ObjectMapper().writeValueAsString(new ErrorMessage(message)));
     }
 
-    private boolean isPathPermitted(HttpServletRequest request) {
-        return isImagePathPermitted(request) || isPermitted(request);
+    private boolean isPathNotPermitted(HttpServletRequest request) {
+        return isProductPathNotPermitted(request) || isNotPermitted(request);
     }
 
-    private boolean isImagePathPermitted(HttpServletRequest request) {
-        return request.getMethod().equalsIgnoreCase("get")
-                && request.getServletPath().startsWith("/products/image");
+    private boolean isProductPathNotPermitted(HttpServletRequest request) {
+        return request.getMethod().equalsIgnoreCase("post")
+                && request.getServletPath().startsWith("/products");
     }
 
-    private boolean isPermitted(HttpServletRequest request) {
-        return request.getServletPath().startsWith("/users");
+    private boolean isNotPermitted(HttpServletRequest request) {
+        return false;
     }
 }

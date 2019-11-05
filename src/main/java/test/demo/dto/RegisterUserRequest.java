@@ -17,4 +17,6 @@ public class RegisterUserRequest {
     @NotBlank(message = "Password must not be empty")
     private String password;
 
+    private String username;
+
 }

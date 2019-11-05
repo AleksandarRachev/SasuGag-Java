@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({MultipartException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorMessage> handleMultipartRequest(MultipartException e) {
-        return new ResponseEntity<>(new ErrorMessage("There was an error: File must not be empty."), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorMessage("File must not be empty."), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({MissingServletRequestParameterException.class})

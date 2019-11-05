@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponse {
+public class PostResponse {
 
     private String uid;
 
     private String name;
 
     private String categoryName;
+
+    private String userUsername;
 
 }

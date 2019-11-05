@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @CrossOrigin("*")
-@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+@PreAuthorize("permitAll()")
 public class CategoryController {
 
     @Autowired
