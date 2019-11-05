@@ -20,6 +20,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({WrongCredentialsException.class, TokenExpiredException.class})
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public ResponseEntity<ErrorMessage> handleForbidden(Exception e) {
+        return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler({MissingServletRequestPartException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorMessage> handleMultipartRequest(MissingServletRequestPartException e) {

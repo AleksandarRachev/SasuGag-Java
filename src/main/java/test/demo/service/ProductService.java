@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import test.demo.dto.ProductResponse;
 import test.demo.entity.Category;
-import test.demo.entity.Product;
+import test.demo.entity.Post;
 import test.demo.exception.ElementExistsException;
 import test.demo.exception.ElementMissingException;
 import test.demo.exception.ImageMissingException;
@@ -44,7 +44,7 @@ public class ProductService {
     }
 
     private void validateProduct(String name) throws ElementExistsException {
-        Optional<Product> product = productRepository.findByName(name);
+        Optional<Post> product = productRepository.findByName(name);
         if(product.isPresent()){
             throw new ElementExistsException("Element with that name already exists");
         }
@@ -53,29 +53,29 @@ public class ProductService {
     public ProductResponse saveProduct(MultipartFile image, String name, String categoryName) throws ElementExistsException, IOException {
         validateProduct(name);
         Category category = categoryService.getCategory(categoryName);
-        Product product = new Product();
-        product.setName(name);
-        product.setImage(image.getBytes());
-        product.setCategory(category);
-        return modelMapper.map(productRepository.save(product), ProductResponse.class);
+        Post post = new Post();
+        post.setName(name);
+        post.setImage(image.getBytes());
+        post.setCategory(category);
+        return modelMapper.map(productRepository.save(post), ProductResponse.class);
     }
 
     public List<ProductResponse> getAllProducts(int page) {
         return productRepository.findAll(PageRequest.of(page, 5))
                 .stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .map(post -> modelMapper.map(post, ProductResponse.class))
                 .collect(Collectors.toList());
     }
 
     public List<ProductResponse> getAllProductsByCategory(int page, String category){
         return productRepository.findAllByCategoryName(PageRequest.of(page, 5), category)
                 .stream()
-                .map(product -> modelMapper.map(product, ProductResponse.class))
+                .map(post -> modelMapper.map(post, ProductResponse.class))
                 .collect(Collectors.toList());
     }
 
-    private Product getProduct(String id){
-        Optional<Product> product = productRepository.findById(id);
+    private Post getProduct(String id){
+        Optional<Post> product = productRepository.findById(id);
         if(product.isEmpty()){
             throw new ElementMissingException("No such product");
         }
@@ -83,7 +83,7 @@ public class ProductService {
     }
 
     public byte[] downloadImage(String productId) {
-        Product product = getProduct(productId);
-        return Optional.ofNullable(product.getImage()).orElseThrow(() -> new ImageMissingException("No image for product"));
+        Post post = getProduct(productId);
+        return Optional.ofNullable(post.getImage()).orElseThrow(() -> new ImageMissingException("No image for product"));
     }
 }

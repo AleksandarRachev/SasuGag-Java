@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "products")
-public class Product {
+public class Post {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -23,5 +23,9 @@ public class Product {
 
     @OneToOne
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
