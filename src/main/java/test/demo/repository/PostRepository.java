@@ -11,7 +11,7 @@ import test.demo.entity.Post;
 public interface PostRepository extends JpaRepository<Post, String> {
 
 
-    Optional<Post> findByName(String name);
+    Optional<Post> findByTitle(String name);
 
     List<Post> findAllByCategoryName(String categoryName);
 

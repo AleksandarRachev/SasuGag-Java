@@ -62,7 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.POST, "/products").hasAnyRole("USER", "ADMIN")
+                .mvcMatchers(HttpMethod.POST, "/posts").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().permitAll()
                 .and().sessionManagement()

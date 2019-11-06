@@ -67,6 +67,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 User user = userService.getUserByEmail(email);
                 request.setAttribute("userId", user.getUid());
+                System.out.println("================="+request.getAttribute("userId"));
 
                 UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -97,7 +98,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private boolean isProductPathNotPermitted(HttpServletRequest request) {
         return request.getMethod().equalsIgnoreCase("post")
-                && request.getServletPath().startsWith("/products");
+                && request.getServletPath().startsWith("/posts");
     }
 
     private boolean isNotPermitted(HttpServletRequest request) {

@@ -1,14 +1,13 @@
 package test.demo.entity;
 
-import javax.persistence.*;
-
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.Data;
+import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "products")
+@Table(name = "posts")
 public class Post {
 
     @Id
@@ -16,7 +15,7 @@ public class Post {
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String uid;
 
-    private String name;
+    private String title;
 
     @Lob
     private byte[] image;
@@ -24,8 +23,15 @@ public class Post {
     @OneToOne
     private Category category;
 
+    private Long createdOn;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @PrePersist
+    public void init() {
+        this.createdOn = System.currentTimeMillis();
+    }
 
 }

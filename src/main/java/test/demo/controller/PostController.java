@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/posts")
 @CrossOrigin("*")
 @PreAuthorize("permitAll()")
 public class PostController {
@@ -24,7 +24,7 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<PostResponse> saveProduct(@RequestPart("file") MultipartFile image,
+    public ResponseEntity<PostResponse> savePost(@RequestPart("file") MultipartFile image,
                                                     @RequestParam("name") String name,
                                                     @RequestParam("category") String categoryName,
                                                     @RequestAttribute("userId") String userId) throws ElementExistsException, IOException {
@@ -37,24 +37,24 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> getAllProducts(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+    public ResponseEntity<List<PostResponse>> getAllPosts(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         return ResponseEntity.ok(postService.getAllPosts(page - 1));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<PostResponse>> getAllProductsByCategory(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+    public ResponseEntity<List<PostResponse>> getAllPostsByCategory(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                                                        @RequestParam(value = "category", required = false) String categoryName){
-        return ResponseEntity.ok(postService.getAllProductsByCategory(page -1, categoryName));
+        return ResponseEntity.ok(postService.getAllPostsByCategory(page -1, categoryName));
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Integer> getProductsCount(){
-        return ResponseEntity.ok(postService.getProductsCount());
+    public ResponseEntity<Integer> getPostsCount(){
+        return ResponseEntity.ok(postService.getPostsCount());
     }
 
     @GetMapping("/count/filter")
-    public ResponseEntity<Integer> getProductsCount(@RequestParam(value = "category", required = false, defaultValue = "") String categoryName){
-        return ResponseEntity.ok(postService.getProductCountByCategoryName(categoryName));
+    public ResponseEntity<Integer> getPostsCount(@RequestParam(value = "category", required = false, defaultValue = "") String categoryName){
+        return ResponseEntity.ok(postService.getPostCountByCategoryName(categoryName));
     }
 
 }

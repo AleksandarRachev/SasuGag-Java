@@ -1,15 +1,9 @@
 package test.demo.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
 import org.springframework.web.multipart.MultipartFile;
 import test.demo.dto.PostResponse;
 import test.demo.entity.Category;
@@ -19,6 +13,11 @@ import test.demo.exception.ElementExistsException;
 import test.demo.exception.ElementMissingException;
 import test.demo.exception.ImageMissingException;
 import test.demo.repository.PostRepository;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -40,26 +39,26 @@ public class PostService {
         this.userService = userService;
     }
 
-    public int getProductsCount(){
+    public int getPostsCount() {
         return postRepository.findAll().size();
     }
 
-    public int getProductCountByCategoryName(String categoryName){
+    public int getPostCountByCategoryName(String categoryName) {
         return postRepository.findAllByCategoryName(categoryName).size();
     }
 
-    private void validateProduct(String name) throws ElementExistsException {
-        Optional<Post> product = postRepository.findByName(name);
-        if(product.isPresent()){
+    private void validatePost(String name) throws ElementExistsException {
+        Optional<Post> post = postRepository.findByTitle(name);
+        if (post.isPresent()) {
             throw new ElementExistsException("Element with that name already exists");
         }
     }
 
     public PostResponse savePost(MultipartFile image, String name, String categoryName, String userId) throws ElementExistsException, IOException {
-        validateProduct(name);
+        validatePost(name);
         Category category = categoryService.getCategory(categoryName);
         Post post = new Post();
-        post.setName(name);
+        post.setTitle(name);
         post.setImage(image.getBytes());
         post.setCategory(category);
 
@@ -76,23 +75,19 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostResponse> getAllProductsByCategory(int page, String category){
+    public List<PostResponse> getAllPostsByCategory(int page, String category) {
         return postRepository.findAllByCategoryName(PageRequest.of(page, 5), category)
                 .stream()
                 .map(post -> modelMapper.map(post, PostResponse.class))
                 .collect(Collectors.toList());
     }
 
-    private Post getProduct(String id){
-        Optional<Post> product = postRepository.findById(id);
-        if(product.isEmpty()){
-            throw new ElementMissingException("No such product");
-        }
-        return product.get();
+    private Post getPost(String id) {
+        return postRepository.findById(id).orElseThrow(() -> new ElementMissingException("No such post"));
     }
 
     public byte[] downloadImage(String productId) {
-        Post post = getProduct(productId);
+        Post post = getPost(productId);
         return Optional.ofNullable(post.getImage()).orElseThrow(() -> new ImageMissingException("No image for product"));
     }
 }
