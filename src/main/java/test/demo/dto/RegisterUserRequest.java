@@ -1,5 +1,6 @@
 package test.demo.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class RegisterUserRequest {
 
     @NotBlank(message = "Email must not be empty")
+    @Email
     private String email;
 
     @NotBlank(message = "Password must not be empty")
