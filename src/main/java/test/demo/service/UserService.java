@@ -17,6 +17,7 @@ import test.demo.enums.Role;
 import test.demo.exception.ElementExistsException;
 import test.demo.exception.ElementMissingException;
 import test.demo.exception.TokenExpiredException;
+import test.demo.exception.WrongCredentialsException;
 import test.demo.repository.UserRepository;
 
 import java.util.Optional;
@@ -74,7 +75,7 @@ public class UserService {
 
     private void authenticate(UserLoginRequest user, User user1) {
         if (!passwordEncoder.matches(user.getPassword(), user1.getPassword())) {
-            throw new BadCredentialsException("Wrong credentials");
+            throw new WrongCredentialsException();
         }
     }
 
