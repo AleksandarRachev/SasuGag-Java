@@ -11,7 +11,7 @@ public class PostResponse {
 
     private String uid;
 
-    private String name;
+    private String title;
 
     private String categoryName;
 

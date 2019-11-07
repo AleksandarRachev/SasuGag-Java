@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import test.demo.dto.PostResponse;
@@ -13,10 +14,14 @@ import test.demo.service.PostService;
 import java.io.IOException;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 @RestController
 @RequestMapping("/posts")
 @CrossOrigin("*")
 @PreAuthorize("permitAll()")
+@Validated
 public class PostController {
 
     @Autowired
@@ -25,10 +30,10 @@ public class PostController {
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostResponse> savePost(@RequestPart("file") MultipartFile image,
-                                                    @RequestParam("name") String name,
+                                                    @RequestParam @NotBlank @Size(max = 50, message = "Title too long") String title,
                                                     @RequestParam("category") String categoryName,
                                                     @RequestAttribute("userId") String userId) throws ElementExistsException, IOException {
-        return ResponseEntity.ok(postService.savePost(image, name, categoryName, userId));
+        return ResponseEntity.ok(postService.savePost(image, title, categoryName, userId));
     }
 
     @GetMapping(value = "/image/{productId}", produces = MediaType.IMAGE_JPEG_VALUE)
