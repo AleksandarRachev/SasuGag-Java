@@ -17,5 +17,5 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 jwt:
-  expiration: 7200 #seconds
+  expiration: 10 #seconds
   secret: SuperSecretKey

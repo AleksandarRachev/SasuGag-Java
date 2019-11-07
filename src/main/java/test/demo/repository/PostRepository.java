@@ -10,10 +10,11 @@ import test.demo.entity.Post;
 
 public interface PostRepository extends JpaRepository<Post, String> {
 
-
     Optional<Post> findByTitle(String name);
 
-    List<Post> findAllByCategoryName(String categoryName);
+    List<Post> findAllByOrderByCreatedOnDesc(Pageable pageable);
 
-    List<Post> findAllByCategoryName(Pageable pageable, String categoryName);
+    List<Post> findAllByCategoryNameOrderByCreatedOnDesc(String categoryName);
+
+    List<Post> findAllByCategoryNameOrderByCreatedOnDesc(Pageable pageable, String categoryName);
 }

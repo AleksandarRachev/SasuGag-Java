@@ -45,7 +45,7 @@ public class PostService {
     }
 
     public int getPostCountByCategoryName(String categoryName) {
-        return postRepository.findAllByCategoryName(categoryName).size();
+        return postRepository.findAllByCategoryNameOrderByCreatedOnDesc(categoryName).size();
     }
 
     private void validatePost(String name, MultipartFile image) throws ElementExistsException {
@@ -95,14 +95,14 @@ public class PostService {
     }
 
     public List<PostResponse> getAllPosts(int page) {
-        return postRepository.findAll(PageRequest.of(page, 5))
+        return postRepository.findAllByOrderByCreatedOnDesc(PageRequest.of(page, 5))
                 .stream()
                 .map(post -> modelMapper.map(post, PostResponse.class))
                 .collect(Collectors.toList());
     }
 
     public List<PostResponse> getAllPostsByCategory(int page, String category) {
-        return postRepository.findAllByCategoryName(PageRequest.of(page, 5), category)
+        return postRepository.findAllByCategoryNameOrderByCreatedOnDesc(PageRequest.of(page, 5), category)
                 .stream()
                 .map(post -> modelMapper.map(post, PostResponse.class))
                 .collect(Collectors.toList());
