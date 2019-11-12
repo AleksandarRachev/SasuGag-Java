@@ -62,4 +62,9 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostCountByCategoryName(categoryName));
     }
 
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponse> getPost(@PathVariable("postId") String postId){
+        return ResponseEntity.ok(postService.getPostById(postId));
+    }
+
 }

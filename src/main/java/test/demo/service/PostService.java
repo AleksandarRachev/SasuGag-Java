@@ -116,4 +116,9 @@ public class PostService {
         Post post = getPost(productId);
         return Optional.ofNullable(post.getImage()).orElseThrow(() -> new ImageMissingException("No image for product"));
     }
+
+    public PostResponse getPostById(String postId) {
+        Post post = getPost(postId);
+        return modelMapper.map(post, PostResponse.class);
+    }
 }
