@@ -96,8 +96,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isProductPathNotPermitted(HttpServletRequest request) {
-        return request.getMethod().equalsIgnoreCase("post")
-                && request.getServletPath().startsWith("/posts");
+        return (request.getMethod().equalsIgnoreCase("post")
+                && request.getServletPath().startsWith("/posts"))
+                || (request.getMethod().equalsIgnoreCase("get")
+                && request.getServletPath().startsWith("/users/token"));
     }
 
     private boolean isNotPermitted(HttpServletRequest request) {

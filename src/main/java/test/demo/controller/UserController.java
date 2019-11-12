@@ -32,4 +32,10 @@ public class UserController {
         return ResponseEntity.ok(userService.loginUser(userLoginRequest));
     }
 
+    @GetMapping("/token")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity isTokenValid(@RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(userService.getById(userId));
+    }
+
 }
