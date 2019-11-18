@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import test.demo.dto.PostResponse;
+import test.demo.dto.PostVoteRequest;
 import test.demo.exception.ElementExistsException;
 import test.demo.service.PostService;
 
@@ -65,6 +66,11 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> getPost(@PathVariable("postId") String postId){
         return ResponseEntity.ok(postService.getPostById(postId));
+    }
+
+    @PutMapping("/vote")
+    public ResponseEntity<PostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest){
+        return ResponseEntity.ok(postService.voteForPost(postVoteRequest));
     }
 
 }

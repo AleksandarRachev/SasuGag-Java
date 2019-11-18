@@ -7,16 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostResponse {
+public class PostVoteRequest {
 
     private String uid;
 
-    private String title;
-
-    private Integer points;
-
-    private String categoryName;
-
-    private String userUsername;
+    private String vote;
 
 }

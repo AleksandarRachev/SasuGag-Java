@@ -1,18 +1,12 @@
 package test.demo.service;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import test.demo.dto.PostResponse;
+import test.demo.dto.PostVoteRequest;
 import test.demo.entity.Category;
 import test.demo.entity.Post;
 import test.demo.entity.User;
@@ -21,6 +15,12 @@ import test.demo.exception.ElementMissingException;
 import test.demo.exception.ImageMissingException;
 import test.demo.exception.UnsupportedImageFormatException;
 import test.demo.repository.PostRepository;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -120,5 +120,25 @@ public class PostService {
     public PostResponse getPostById(String postId) {
         Post post = getPost(postId);
         return modelMapper.map(post, PostResponse.class);
+    }
+
+    private void changePostPoints(Post post, String vote) {
+        switch (vote) {
+            case "up":
+                post.setPoints(post.getPoints() + 1);
+                break;
+            case "down":
+                post.setPoints(post.getPoints() - 1);
+                break;
+            default:
+                post.setPoints(post.getPoints());
+        }
+        postRepository.save(post);
+    }
+
+    public PostResponse voteForPost(PostVoteRequest postVoteRequest) {
+        Post post = getPost(postVoteRequest.getUid());
+        changePostPoints(post, postVoteRequest.getVote());
+        return  modelMapper.map(post, PostResponse.class);
     }
 }

@@ -17,6 +17,8 @@ public class Post {
 
     private String title;
 
+    private Integer points = 0;
+
     @Lob
     private byte[] image;
 
