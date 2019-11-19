@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import test.demo.entity.User;
 import test.demo.exception.ErrorMessage;
@@ -99,7 +99,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return (request.getMethod().equalsIgnoreCase("post")
                 && request.getServletPath().startsWith("/posts"))
                 || (request.getMethod().equalsIgnoreCase("get")
-                && request.getServletPath().startsWith("/users/token"));
+                && request.getServletPath().startsWith("/users/token"))
+                || (request.getMethod().equalsIgnoreCase("post")
+                && request.getServletPath().startsWith("/categories"));
     }
 
     private boolean isNotPermitted(HttpServletRequest request) {
