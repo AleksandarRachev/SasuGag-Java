@@ -16,6 +16,8 @@ import test.demo.service.CategoryService;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/categories")
 @CrossOrigin("*")
@@ -32,7 +34,7 @@ public class CategoryController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryResponse> addCategory(@RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<CategoryResponse> addCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
         return ResponseEntity.ok(categoryService.addCategory(categoryRequest));
     }
 }
