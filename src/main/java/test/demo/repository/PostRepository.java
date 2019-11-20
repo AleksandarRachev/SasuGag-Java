@@ -17,4 +17,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> findAllByCategoryNameOrderByCreatedOnDesc(String categoryName);
 
     List<Post> findAllByCategoryNameOrderByCreatedOnDesc(Pageable pageable, String categoryName);
+
+//    int countByCommentsPostUid(String postId);
 }

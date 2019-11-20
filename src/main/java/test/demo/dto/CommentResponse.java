@@ -13,4 +13,6 @@ public class CommentResponse {
 
     private String text;
 
+    private String userUsername;
+
 }

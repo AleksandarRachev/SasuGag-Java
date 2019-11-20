@@ -12,11 +12,10 @@ import test.demo.dto.PostVoteRequest;
 import test.demo.exception.ElementExistsException;
 import test.demo.service.PostService;
 
-import java.io.IOException;
-import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -31,9 +30,9 @@ public class PostController {
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<PostResponse> savePost(@RequestPart("file") MultipartFile image,
-                                                    @RequestParam @NotBlank @Size(max = 50, message = "Title too long") String title,
-                                                    @RequestParam("category") String categoryName,
-                                                    @RequestAttribute("userId") String userId) throws ElementExistsException, IOException {
+                                                 @RequestParam @NotBlank @Size(max = 50, message = "Title too long") String title,
+                                                 @RequestParam("category") String categoryName,
+                                                 @RequestAttribute("userId") String userId) throws ElementExistsException, IOException {
         return ResponseEntity.ok(postService.savePost(image, title, categoryName, userId));
     }
 
@@ -49,27 +48,27 @@ public class PostController {
 
     @GetMapping("/filter")
     public ResponseEntity<List<PostResponse>> getAllPostsByCategory(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-                                                                       @RequestParam(value = "category", required = false) String categoryName){
+                                                                    @RequestParam(value = "category", required = false) String categoryName) {
         return ResponseEntity.ok(postService.getAllPostsByCategory(page, categoryName));
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Integer> getPostsCount(){
+    public ResponseEntity<Integer> getPostsCount() {
         return ResponseEntity.ok(postService.getPostsCount());
     }
 
     @GetMapping("/count/filter")
-    public ResponseEntity<Integer> getPostsCount(@RequestParam(value = "category", required = false, defaultValue = "") String categoryName){
+    public ResponseEntity<Integer> getPostsCount(@RequestParam(value = "category", required = false, defaultValue = "") String categoryName) {
         return ResponseEntity.ok(postService.getPostCountByCategoryName(categoryName));
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> getPost(@PathVariable("postId") String postId){
+    public ResponseEntity<PostResponse> getPost(@PathVariable("postId") String postId) {
         return ResponseEntity.ok(postService.getPostById(postId));
     }
 
     @PutMapping("/vote")
-    public ResponseEntity<PostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest){
+    public ResponseEntity<PostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest) {
         return ResponseEntity.ok(postService.voteForPost(postVoteRequest));
     }
 
