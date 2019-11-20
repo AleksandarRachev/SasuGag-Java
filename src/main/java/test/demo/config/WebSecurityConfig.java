@@ -64,6 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.POST, "/posts").hasAnyRole("USER", "ADMIN")
                 .mvcMatchers(HttpMethod.POST, "/categories").hasRole( "ADMIN")
+                .mvcMatchers(HttpMethod.POST, "/comments").hasAnyRole("USER", "ADMIN")
                 .mvcMatchers(HttpMethod.GET, "/users/token/{userId}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().permitAll()

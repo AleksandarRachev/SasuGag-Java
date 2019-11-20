@@ -108,7 +108,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    private Post getPost(String id) {
+    Post getPost(String id) {
         return postRepository.findById(id).orElseThrow(() -> new ElementMissingException("No such post"));
     }
 

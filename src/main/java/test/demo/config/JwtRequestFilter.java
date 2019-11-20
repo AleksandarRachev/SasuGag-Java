@@ -96,12 +96,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isProductPathNotPermitted(HttpServletRequest request) {
-        return (request.getMethod().equalsIgnoreCase("post")
-                && request.getServletPath().startsWith("/posts"))
-                || (request.getMethod().equalsIgnoreCase("get")
-                && request.getServletPath().startsWith("/users/token"))
-                || (request.getMethod().equalsIgnoreCase("post")
-                && request.getServletPath().startsWith("/categories"));
+        return (request.getMethod().equalsIgnoreCase("post") && request.getServletPath().startsWith("/posts"))
+                || (request.getMethod().equalsIgnoreCase("get") && request.getServletPath().startsWith("/users/token"))
+                || (request.getMethod().equalsIgnoreCase("post") && request.getServletPath().startsWith("/categories"))
+                || (request.getMethod().equalsIgnoreCase("post") && request.getServletPath().startsWith("/comments"));
     }
 
     private boolean isNotPermitted(HttpServletRequest request) {
