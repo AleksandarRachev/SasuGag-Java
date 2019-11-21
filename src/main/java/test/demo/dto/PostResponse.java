@@ -1,10 +1,10 @@
 package test.demo.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +23,7 @@ public class PostResponse {
 
     private List<CommentResponse> comments;
 
-    public Integer getComments(){
+    public Integer getComments() {
         return comments.size();
     }
 

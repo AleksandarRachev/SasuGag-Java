@@ -1,17 +1,18 @@
 package test.demo.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import test.demo.dto.CommentRequest;
 import test.demo.dto.CommentResponse;
 import test.demo.entity.Comment;
 import test.demo.entity.Post;
 import test.demo.entity.User;
 import test.demo.repository.CommentRepository;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentService {

@@ -1,12 +1,12 @@
 package test.demo.service;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.ExpiredJwtException;
 import test.demo.config.JwtTokenUtil;
 import test.demo.dto.RegisterUserRequest;
 import test.demo.dto.UserLoginRequest;
@@ -19,8 +19,6 @@ import test.demo.exception.ElementMissingException;
 import test.demo.exception.TokenExpiredException;
 import test.demo.exception.WrongCredentialsException;
 import test.demo.repository.UserRepository;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -59,7 +57,7 @@ public class UserService {
         if (userRepository.findByEmail(registerUserRequest.getEmail()).isPresent()) {
             throw new ElementExistsException("Email taken");
         }
-        if(userRepository.findByUsername(registerUserRequest.getUsername()).isPresent()){
+        if (userRepository.findByUsername(registerUserRequest.getUsername()).isPresent()) {
             throw new ElementExistsException("Username taken");
         }
     }

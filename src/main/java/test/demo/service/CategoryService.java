@@ -1,5 +1,9 @@
 package test.demo.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,10 +14,6 @@ import test.demo.entity.Category;
 import test.demo.exception.ElementExistsException;
 import test.demo.exception.ElementMissingException;
 import test.demo.repository.CategoryRepository;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -28,14 +28,14 @@ public class CategoryService {
         this.modelMapper = modelMapper;
     }
 
-    public List<CategoryResponse> getAll(){
+    public List<CategoryResponse> getAll() {
         return categoryRepository.findAll()
                 .stream()
                 .map(category -> modelMapper.map(category, CategoryResponse.class))
                 .collect(Collectors.toList());
     }
 
-    Category getCategory(String name){
+    Category getCategory(String name) {
         return categoryRepository.findByName(name).orElseThrow(() -> new ElementMissingException("Invalid category"));
     }
 

@@ -1,26 +1,30 @@
 package test.demo.service;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import test.demo.dto.PostResponse;
-import test.demo.dto.PostVoteRequest;
-import test.demo.entity.Category;
-import test.demo.entity.Post;
-import test.demo.entity.User;
-import test.demo.exception.ElementExistsException;
-import test.demo.exception.ElementMissingException;
-import test.demo.exception.ImageMissingException;
-import test.demo.exception.UnsupportedImageFormatException;
-import test.demo.repository.PostRepository;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import test.demo.dto.PostResponse;
+import test.demo.dto.PostVoteRequest;
+import test.demo.entity.Category;
+import test.demo.entity.Post;
+import test.demo.entity.User;
+import test.demo.entity.VotedPost;
+import test.demo.entity.VotedPostId;
+import test.demo.exception.ElementExistsException;
+import test.demo.exception.ElementMissingException;
+import test.demo.exception.ImageMissingException;
+import test.demo.exception.UnsupportedImageFormatException;
+import test.demo.repository.PostRepository;
+import test.demo.repository.VotedPostRepository;
 
 @Service
 public class PostService {
@@ -29,15 +33,17 @@ public class PostService {
     private final ModelMapper modelMapper;
     private final CategoryService categoryService;
     private final UserService userService;
+    private final VotedPostRepository votedPostRepository;
     private List<String> validImageExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
 
     @Autowired
     public PostService(PostRepository postRepository, ModelMapper modelMapper, CategoryService categoryService,
-                       UserService userService) {
+                       UserService userService, VotedPostRepository votedPostRepository) {
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;
         this.categoryService = categoryService;
         this.userService = userService;
+        this.votedPostRepository = votedPostRepository;
     }
 
     public int getPostsCount() {
@@ -122,23 +128,71 @@ public class PostService {
         return modelMapper.map(post, PostResponse.class);
     }
 
-    private void changePostPoints(Post post, String vote) {
+    private void changePostPoints(Post post, String vote, VotedPost votedPost) {
         switch (vote) {
             case "up":
-                post.setPoints(post.getPoints() + 1);
+                voteUp(post, votedPost);
                 break;
             case "down":
-                post.setPoints(post.getPoints() - 1);
+                voteDown(post, votedPost);
                 break;
             default:
                 post.setPoints(post.getPoints());
         }
+        votedPostRepository.save(votedPost);
         postRepository.save(post);
     }
 
-    public PostResponse voteForPost(PostVoteRequest postVoteRequest) {
+    private void voteUp(Post post, VotedPost votedPost) {
+        if (votedPost.getUp() && !votedPost.getDown()) {
+            post.setPoints(post.getPoints() - 1);
+            votedPost.setUp(false);
+        } else {
+            if (!votedPost.getUp() && votedPost.getDown()) {
+                post.setPoints(post.getPoints() + 2);
+                votedPost.setUp(true);
+                votedPost.setDown(false);
+            } else {
+                post.setPoints(post.getPoints() + 1);
+                votedPost.setUp(true);
+            }
+        }
+    }
+
+    private void voteDown(Post post, VotedPost votedPost) {
+        if (votedPost.getDown() && !votedPost.getUp()) {
+            post.setPoints(post.getPoints() + 1);
+            votedPost.setDown(false);
+        } else {
+            if (!votedPost.getDown() && votedPost.getUp()) {
+                post.setPoints(post.getPoints() - 2);
+                votedPost.setDown(true);
+                votedPost.setUp(false);
+            } else {
+                post.setPoints(post.getPoints() - 1);
+                votedPost.setDown(true);
+            }
+        }
+    }
+
+    public PostResponse voteForPost(PostVoteRequest postVoteRequest, String userId) {
         Post post = getPost(postVoteRequest.getUid());
-        changePostPoints(post, postVoteRequest.getVote());
-        return  modelMapper.map(post, PostResponse.class);
+        User user = userService.getById(userId);
+
+        VotedPost votedPost = getVotedPost(post, user);
+
+        changePostPoints(post, postVoteRequest.getVote(), votedPost);
+        return modelMapper.map(post, PostResponse.class);
+    }
+
+    private VotedPost getVotedPost(Post post, User user) {
+        VotedPostId id = new VotedPostId(user, post);
+        Optional<VotedPost> votedPost = votedPostRepository.findById(id);
+        if (votedPost.isEmpty()) {
+            VotedPost newVotedPost = new VotedPost();
+            newVotedPost.setUid(id);
+            return newVotedPost;
+        }
+        return votedPostRepository.save(votedPost.get());
     }
 }

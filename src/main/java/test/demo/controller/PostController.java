@@ -1,21 +1,33 @@
 package test.demo.controller;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import test.demo.dto.PostResponse;
 import test.demo.dto.PostVoteRequest;
 import test.demo.exception.ElementExistsException;
 import test.demo.service.PostService;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -68,8 +80,10 @@ public class PostController {
     }
 
     @PutMapping("/vote")
-    public ResponseEntity<PostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest) {
-        return ResponseEntity.ok(postService.voteForPost(postVoteRequest));
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<PostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest,
+                                                    @RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(postService.voteForPost(postVoteRequest, userId));
     }
 
 }

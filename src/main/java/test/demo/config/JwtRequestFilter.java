@@ -99,7 +99,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return (request.getMethod().equalsIgnoreCase("post") && request.getServletPath().startsWith("/posts"))
                 || (request.getMethod().equalsIgnoreCase("get") && request.getServletPath().startsWith("/users/token"))
                 || (request.getMethod().equalsIgnoreCase("post") && request.getServletPath().startsWith("/categories"))
-                || (request.getMethod().equalsIgnoreCase("post") && request.getServletPath().startsWith("/comments"));
+                || (request.getMethod().equalsIgnoreCase("post") && request.getServletPath().startsWith("/comments"))
+                || (request.getMethod().equalsIgnoreCase("put") && request.getServletPath().startsWith("/posts/vote"));
     }
 
     private boolean isNotPermitted(HttpServletRequest request) {
