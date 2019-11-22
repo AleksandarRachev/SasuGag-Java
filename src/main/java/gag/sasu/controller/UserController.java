@@ -1,24 +1,17 @@
 package gag.sasu.controller;
 
-import javax.validation.Valid;
-
-import gag.sasu.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import gag.sasu.dto.RegisterUserRequest;
 import gag.sasu.dto.UserLoginRequest;
 import gag.sasu.dto.UserLoginResponse;
 import gag.sasu.dto.UserResponse;
 import gag.sasu.exception.TokenExpiredException;
+import gag.sasu.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")

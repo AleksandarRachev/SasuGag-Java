@@ -1,10 +1,10 @@
 package gag.sasu;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import gag.sasu.entity.User;
 import gag.sasu.enums.Role;
 import gag.sasu.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -21,7 +21,9 @@ public class BasicInserts {
         admin.setPassword("admin");
         admin.setUsername("admin");
         admin.setRole(Role.ADMIN);
-        userRepository.save(admin);
+        if (userRepository.findByEmail(admin.getEmail()).isEmpty()) {
+            userRepository.save(admin);
+        }
     }
 
 }

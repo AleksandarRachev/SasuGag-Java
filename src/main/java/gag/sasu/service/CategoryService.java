@@ -1,9 +1,8 @@
 package gag.sasu.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import gag.sasu.dto.CategoryRequest;
+import gag.sasu.dto.CategoryResponse;
+import gag.sasu.entity.Category;
 import gag.sasu.exception.ElementExistsException;
 import gag.sasu.exception.ElementMissingException;
 import gag.sasu.repository.CategoryRepository;
@@ -11,9 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import gag.sasu.dto.CategoryRequest;
-import gag.sasu.dto.CategoryResponse;
-import gag.sasu.entity.Category;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {

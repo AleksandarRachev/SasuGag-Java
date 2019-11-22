@@ -1,10 +1,9 @@
 package gag.sasu.repository;
 
-import java.util.Optional;
-
+import gag.sasu.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import gag.sasu.entity.Category;
+import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, String> {
 

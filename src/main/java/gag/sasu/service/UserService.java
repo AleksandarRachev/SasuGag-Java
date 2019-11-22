@@ -1,12 +1,5 @@
 package gag.sasu.service;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.ExpiredJwtException;
 import gag.sasu.config.JwtTokenUtil;
 import gag.sasu.dto.RegisterUserRequest;
 import gag.sasu.dto.UserLoginRequest;
@@ -19,6 +12,12 @@ import gag.sasu.exception.ElementMissingException;
 import gag.sasu.exception.TokenExpiredException;
 import gag.sasu.exception.WrongCredentialsException;
 import gag.sasu.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {

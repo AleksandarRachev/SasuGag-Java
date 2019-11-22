@@ -1,30 +1,25 @@
 package gag.sasu.service;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import gag.sasu.entity.Post;
-import gag.sasu.entity.User;
+import gag.sasu.dto.PostResponse;
+import gag.sasu.dto.PostVoteRequest;
+import gag.sasu.entity.*;
 import gag.sasu.exception.ElementExistsException;
 import gag.sasu.exception.ElementMissingException;
+import gag.sasu.exception.ImageMissingException;
+import gag.sasu.exception.UnsupportedImageFormatException;
 import gag.sasu.repository.PostRepository;
+import gag.sasu.repository.VotedPostRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import gag.sasu.dto.PostResponse;
-import gag.sasu.dto.PostVoteRequest;
-import gag.sasu.entity.Category;
-import gag.sasu.entity.VotedPost;
-import gag.sasu.entity.VotedPostId;
-import gag.sasu.exception.ImageMissingException;
-import gag.sasu.exception.UnsupportedImageFormatException;
-import gag.sasu.repository.VotedPostRepository;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
