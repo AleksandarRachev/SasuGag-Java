@@ -2,6 +2,7 @@ package gag.sasu.controller;
 
 import gag.sasu.dto.PostResponse;
 import gag.sasu.dto.PostVoteRequest;
+import gag.sasu.dto.VotedPostResponse;
 import gag.sasu.exception.ElementExistsException;
 import gag.sasu.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,12 @@ public class PostController {
     public ResponseEntity<PostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest,
                                                     @RequestAttribute("userId") String userId) {
         return ResponseEntity.ok(postService.voteForPost(postVoteRequest, userId));
+    }
+
+    @GetMapping("/voted")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<VotedPostResponse>> getVotedPosts(@RequestAttribute(required = false, value = "userId") String userId) {
+        return ResponseEntity.ok(postService.getAllVotedPosts(userId));
     }
 
 }

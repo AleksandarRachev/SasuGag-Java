@@ -2,6 +2,7 @@ package gag.sasu.service;
 
 import gag.sasu.dto.PostResponse;
 import gag.sasu.dto.PostVoteRequest;
+import gag.sasu.dto.VotedPostResponse;
 import gag.sasu.entity.*;
 import gag.sasu.exception.ElementExistsException;
 import gag.sasu.exception.ElementMissingException;
@@ -189,5 +190,13 @@ public class PostService {
             return newVotedPost;
         }
         return votedPostRepository.save(votedPost.get());
+    }
+
+    public List<VotedPostResponse> getAllVotedPosts(String userId) {
+        return votedPostRepository.findAllByUpOrDown(true, true)
+                .stream()
+                .filter(votedPost -> votedPost.getUid().getUser().getUid().equals(userId))
+                .map(votedPost -> modelMapper.map(votedPost, VotedPostResponse.class))
+                .collect(Collectors.toList());
     }
 }
