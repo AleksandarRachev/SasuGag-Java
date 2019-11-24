@@ -2,6 +2,7 @@ package gag.sasu.controller;
 
 import gag.sasu.dto.PostResponse;
 import gag.sasu.dto.PostVoteRequest;
+import gag.sasu.dto.VoteForPostResponse;
 import gag.sasu.dto.VotedPostResponse;
 import gag.sasu.exception.ElementExistsException;
 import gag.sasu.service.PostService;
@@ -70,8 +71,8 @@ public class PostController {
 
     @PutMapping("/vote")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<PostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest,
-                                                    @RequestAttribute("userId") String userId) {
+    public ResponseEntity<VoteForPostResponse> voteForPost(@RequestBody PostVoteRequest postVoteRequest,
+                                                           @RequestAttribute("userId") String userId) {
         return ResponseEntity.ok(postService.voteForPost(postVoteRequest, userId));
     }
 
@@ -79,6 +80,13 @@ public class PostController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<VotedPostResponse>> getVotedPosts(@RequestAttribute(required = false, value = "userId") String userId) {
         return ResponseEntity.ok(postService.getAllVotedPosts(userId));
+    }
+
+    @GetMapping("/voted/{postId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<VotedPostResponse> getVotedPost(@PathVariable("postId") String postId,
+                                                         @RequestAttribute("userId") String userId){
+        return ResponseEntity.ok(postService.getVotedPostById(userId, postId));
     }
 
 }

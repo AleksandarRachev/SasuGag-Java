@@ -2,6 +2,7 @@ package gag.sasu.service;
 
 import gag.sasu.dto.PostResponse;
 import gag.sasu.dto.PostVoteRequest;
+import gag.sasu.dto.VoteForPostResponse;
 import gag.sasu.dto.VotedPostResponse;
 import gag.sasu.entity.*;
 import gag.sasu.exception.ElementExistsException;
@@ -171,14 +172,17 @@ public class PostService {
         }
     }
 
-    public PostResponse voteForPost(PostVoteRequest postVoteRequest, String userId) {
+    public VoteForPostResponse voteForPost(PostVoteRequest postVoteRequest, String userId) {
         Post post = getPost(postVoteRequest.getUid());
         User user = userService.getById(userId);
 
         VotedPost votedPost = getVotedPost(post, user);
 
         changePostPoints(post, postVoteRequest.getVote(), votedPost);
-        return modelMapper.map(post, PostResponse.class);
+
+        VoteForPostResponse voteForPostResponse = modelMapper.map(post, VoteForPostResponse.class);
+        voteForPostResponse.setVoteOnPost(modelMapper.map(getVotedPost(post,user), VotedPostResponse.class));
+        return voteForPostResponse;
     }
 
     private VotedPost getVotedPost(Post post, User user) {
@@ -198,5 +202,11 @@ public class PostService {
                 .filter(votedPost -> votedPost.getUid().getUser().getUid().equals(userId))
                 .map(votedPost -> modelMapper.map(votedPost, VotedPostResponse.class))
                 .collect(Collectors.toList());
+    }
+
+    public VotedPostResponse getVotedPostById(String userId, String postId) {
+        User user = userService.getById(userId);
+        Post post = getPost(postId);
+        return modelMapper.map(getVotedPost(post, user), VotedPostResponse.class);
     }
 }
