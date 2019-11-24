@@ -10,6 +10,7 @@ import gag.sasu.exception.ElementMissingException;
 import gag.sasu.exception.ImageMissingException;
 import gag.sasu.exception.UnsupportedImageFormatException;
 import gag.sasu.repository.PostRepository;
+import gag.sasu.repository.UserRepository;
 import gag.sasu.repository.VotedPostRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class PostService {
     private final UserService userService;
     private final VotedPostRepository votedPostRepository;
     private List<String> validImageExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     public PostService(PostRepository postRepository, ModelMapper modelMapper, CategoryService categoryService,
@@ -97,10 +100,15 @@ public class PostService {
         throw new UnsupportedImageFormatException("Unsupported image format");
     }
 
-    public List<PostResponse> getAllPosts(int page) {
+    public List<VoteForPostResponse> getAllPosts(int page, String userId) {
+        Optional<User> user = userRepository.findById(userId);
         return postRepository.findAllByOrderByCreatedOnDesc(PageRequest.of(page, 5))
                 .stream()
-                .map(post -> modelMapper.map(post, PostResponse.class))
+                .map(post -> {
+                    VoteForPostResponse voteForPostResponse = modelMapper.map(post, VoteForPostResponse.class);
+                    user.ifPresent(value -> voteForPostResponse.setVoteOnPost(modelMapper.map(getVotedPost(post, value), VotedPostResponse.class)));
+                    return voteForPostResponse;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -181,7 +189,7 @@ public class PostService {
         changePostPoints(post, postVoteRequest.getVote(), votedPost);
 
         VoteForPostResponse voteForPostResponse = modelMapper.map(post, VoteForPostResponse.class);
-        voteForPostResponse.setVoteOnPost(modelMapper.map(getVotedPost(post,user), VotedPostResponse.class));
+        voteForPostResponse.setVoteOnPost(modelMapper.map(getVotedPost(post, user), VotedPostResponse.class));
         return voteForPostResponse;
     }
 
@@ -194,14 +202,6 @@ public class PostService {
             return newVotedPost;
         }
         return votedPostRepository.save(votedPost.get());
-    }
-
-    public List<VotedPostResponse> getAllVotedPosts(String userId) {
-        return votedPostRepository.findAllByUpOrDown(true, true)
-                .stream()
-                .filter(votedPost -> votedPost.getUid().getUser().getUid().equals(userId))
-                .map(votedPost -> modelMapper.map(votedPost, VotedPostResponse.class))
-                .collect(Collectors.toList());
     }
 
     public VotedPostResponse getVotedPostById(String userId, String postId) {

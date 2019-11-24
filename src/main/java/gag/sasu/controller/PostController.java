@@ -44,8 +44,9 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostResponse>> getAllPosts(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page) {
-        return ResponseEntity.ok(postService.getAllPosts(page));
+    public ResponseEntity<List<VoteForPostResponse>> getAllPosts(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                                                 @RequestParam(value = "userId", required = false, defaultValue = "null") String userId) {
+        return ResponseEntity.ok(postService.getAllPosts(page, userId));
     }
 
     @GetMapping("/filter")
@@ -76,16 +77,10 @@ public class PostController {
         return ResponseEntity.ok(postService.voteForPost(postVoteRequest, userId));
     }
 
-    @GetMapping("/voted")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<List<VotedPostResponse>> getVotedPosts(@RequestAttribute(required = false, value = "userId") String userId) {
-        return ResponseEntity.ok(postService.getAllVotedPosts(userId));
-    }
-
     @GetMapping("/voted/{postId}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<VotedPostResponse> getVotedPost(@PathVariable("postId") String postId,
-                                                         @RequestAttribute("userId") String userId){
+                                                          @RequestAttribute("userId") String userId) {
         return ResponseEntity.ok(postService.getVotedPostById(userId, postId));
     }
 
