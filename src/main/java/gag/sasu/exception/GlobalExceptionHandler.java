@@ -15,7 +15,7 @@ import javax.validation.ConstraintViolationException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({ConstraintViolationException.class, ElementExistsException.class, ElementMissingException.class,
-            UnsupportedImageFormatException.class})
+            UnsupportedImageFormatException.class, CannotDeletePostException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorMessage> handleBadRequest(Exception e) {
         return new ResponseEntity<>(new ErrorMessage(e.getMessage()), HttpStatus.BAD_REQUEST);

@@ -1,9 +1,6 @@
 package gag.sasu.controller;
 
-import gag.sasu.dto.PostResponse;
-import gag.sasu.dto.PostVoteRequest;
-import gag.sasu.dto.VoteForPostResponse;
-import gag.sasu.dto.VotedPostResponse;
+import gag.sasu.dto.*;
 import gag.sasu.exception.ElementExistsException;
 import gag.sasu.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +85,13 @@ public class PostController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<PostResponse>> getUserPosts(@RequestAttribute("userId") String userId) {
         return ResponseEntity.ok(postService.getPostsForUser(userId));
+    }
+
+    @DeleteMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<DeletePostResponse> deletePost(@PathVariable("postId") String postId,
+                                                         @RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(postService.deletePost(postId, userId));
     }
 
 }

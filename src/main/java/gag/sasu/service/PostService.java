@@ -1,14 +1,9 @@
 package gag.sasu.service;
 
-import gag.sasu.dto.PostResponse;
-import gag.sasu.dto.PostVoteRequest;
-import gag.sasu.dto.VoteForPostResponse;
-import gag.sasu.dto.VotedPostResponse;
+import gag.sasu.dto.*;
 import gag.sasu.entity.*;
-import gag.sasu.exception.ElementExistsException;
-import gag.sasu.exception.ElementMissingException;
-import gag.sasu.exception.ImageMissingException;
-import gag.sasu.exception.UnsupportedImageFormatException;
+import gag.sasu.enums.Role;
+import gag.sasu.exception.*;
 import gag.sasu.repository.PostRepository;
 import gag.sasu.repository.UserRepository;
 import gag.sasu.repository.VotedPostRepository;
@@ -215,5 +210,16 @@ public class PostService {
                 .stream()
                 .map(post -> modelMapper.map(post, PostResponse.class))
                 .collect(Collectors.toList());
+    }
+
+    public DeletePostResponse deletePost(String postId, String userId) {
+        User user = userService.getById(userId);
+        Post post = getPost(postId);
+        if (post.getUser().getUid().equals(userId) || user.getRole() == Role.ADMIN) {
+            postRepository.delete(post);
+        } else {
+            throw new CannotDeletePostException();
+        }
+        return modelMapper.map(post, DeletePostResponse.class);
     }
 }
