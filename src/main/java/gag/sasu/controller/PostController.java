@@ -84,4 +84,10 @@ public class PostController {
         return ResponseEntity.ok(postService.getVotedPostById(userId, postId));
     }
 
+    @GetMapping("/user")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<PostResponse>> getUserPosts(@RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(postService.getPostsForUser(userId));
+    }
+
 }

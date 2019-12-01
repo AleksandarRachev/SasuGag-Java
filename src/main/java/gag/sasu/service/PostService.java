@@ -209,4 +209,11 @@ public class PostService {
         Post post = getPost(postId);
         return modelMapper.map(getVotedPost(post, user), VotedPostResponse.class);
     }
+
+    public List<PostResponse> getPostsForUser(String userId) {
+        return postRepository.findAllByUserUidOrderByCreatedOnDesc(userId)
+                .stream()
+                .map(post -> modelMapper.map(post, PostResponse.class))
+                .collect(Collectors.toList());
+    }
 }
