@@ -223,6 +223,8 @@ public class PostService {
         User user = userService.getById(userId);
         Post post = getPost(postId);
         if (post.getUser().getUid().equals(userId) || user.getRole() == Role.ADMIN) {
+            VotedPost votedPost = getVotedPost(post, user);
+            votedPostRepository.delete(votedPost);
             postRepository.delete(post);
         } else {
             throw new CannotDeletePostException();
