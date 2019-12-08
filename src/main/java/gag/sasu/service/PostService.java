@@ -95,9 +95,9 @@ public class PostService {
         throw new UnsupportedImageFormatException("Unsupported image format");
     }
 
-    public List<VoteForPostResponse> getAllPosts(int page, String userId) {
+    public GetAllPostsResponse getAllPosts(int page, String userId) {
         Optional<User> user = userRepository.findById(userId);
-        return postRepository.findAllByOrderByCreatedOnDesc(PageRequest.of(page, 5))
+        List<VoteForPostResponse> posts = postRepository.findAllByOrderByCreatedOnDesc(PageRequest.of(page, 5))
                 .stream()
                 .map(post -> {
                     VoteForPostResponse voteForPostResponse = modelMapper.map(post, VoteForPostResponse.class);
@@ -105,13 +105,20 @@ public class PostService {
                     return voteForPostResponse;
                 })
                 .collect(Collectors.toList());
+        return new GetAllPostsResponse(posts, postRepository.findAll().size());
     }
 
-    public List<PostResponse> getAllPostsByCategory(int page, String category) {
-        return postRepository.findAllByCategoryNameOrderByCreatedOnDesc(PageRequest.of(page, 5), category)
+    public GetAllPostsResponse getAllPostsByCategory(int page, String category, String userId) {
+        Optional<User> user = userRepository.findById(userId);
+        List<VoteForPostResponse> posts = postRepository.findAllByCategoryNameOrderByCreatedOnDesc(PageRequest.of(page, 5), category)
                 .stream()
-                .map(post -> modelMapper.map(post, PostResponse.class))
+                .map(post -> {
+                    VoteForPostResponse voteForPostResponse = modelMapper.map(post, VoteForPostResponse.class);
+                    user.ifPresent(value -> voteForPostResponse.setVoteOnPost(modelMapper.map(getVotedPost(post, value), VotedPostResponse.class)));
+                    return voteForPostResponse;
+                })
                 .collect(Collectors.toList());
+        return new GetAllPostsResponse(posts, postRepository.findAllByCategoryNameOrderByCreatedOnDesc(category).size());
     }
 
     Post getPost(String id) {

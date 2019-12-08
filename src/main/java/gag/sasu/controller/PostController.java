@@ -41,15 +41,16 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VoteForPostResponse>> getAllPosts(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-                                                                 @RequestParam(value = "userId", required = false, defaultValue = "null") String userId) {
+    public ResponseEntity<GetAllPostsResponse> getAllPosts(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                                           @RequestParam(value = "userId", required = false, defaultValue = "null") String userId) {
         return ResponseEntity.ok(postService.getAllPosts(page, userId));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<PostResponse>> getAllPostsByCategory(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-                                                                    @RequestParam(value = "category", required = false) String categoryName) {
-        return ResponseEntity.ok(postService.getAllPostsByCategory(page, categoryName));
+    public ResponseEntity<GetAllPostsResponse> getAllPostsByCategory(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                                                                     @RequestParam(value = "category", required = false) String categoryName,
+                                                                     @RequestParam(value = "userId", required = false, defaultValue = "null") String userId) {
+        return ResponseEntity.ok(postService.getAllPostsByCategory(page, categoryName, userId));
     }
 
     @GetMapping("/count")
