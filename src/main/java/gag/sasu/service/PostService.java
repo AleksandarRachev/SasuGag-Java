@@ -105,7 +105,7 @@ public class PostService {
                     return voteForPostResponse;
                 })
                 .collect(Collectors.toList());
-        return new GetAllPostsResponse(posts, postRepository.findAll().size());
+        return new GetAllPostsResponse(posts, postRepository.count());
     }
 
     public GetAllPostsResponse getAllPostsByCategory(int page, String category, String userId) {
@@ -118,7 +118,7 @@ public class PostService {
                     return voteForPostResponse;
                 })
                 .collect(Collectors.toList());
-        return new GetAllPostsResponse(posts, postRepository.findAllByCategoryNameOrderByCreatedOnDesc(category).size());
+        return new GetAllPostsResponse(posts, postRepository.countByCategoryNameOrderByCreatedOnDesc(category));
     }
 
     Post getPost(String id) {
@@ -212,11 +212,12 @@ public class PostService {
         return modelMapper.map(getVotedPost(post, user), VotedPostResponse.class);
     }
 
-    public List<PostResponse> getPostsForUser(String userId) {
-        return postRepository.findAllByUserUidOrderByCreatedOnDesc(userId)
+    public GetAllPostsResponse getPostsForUser(Integer page, String userId) {
+        List<VoteForPostResponse> posts = postRepository.findAllByUserUidOrderByCreatedOnDesc(PageRequest.of(page, 5), userId)
                 .stream()
-                .map(post -> modelMapper.map(post, PostResponse.class))
+                .map(post -> modelMapper.map(post, VoteForPostResponse.class))
                 .collect(Collectors.toList());
+        return new GetAllPostsResponse(posts, postRepository.countByUserUid(userId));
     }
 
     public DeletePostResponse deletePost(String postId, String userId) {

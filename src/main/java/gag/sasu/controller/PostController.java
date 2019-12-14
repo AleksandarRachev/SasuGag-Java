@@ -84,8 +84,9 @@ public class PostController {
 
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<List<PostResponse>> getUserPosts(@RequestAttribute("userId") String userId) {
-        return ResponseEntity.ok(postService.getPostsForUser(userId));
+    public ResponseEntity<GetAllPostsResponse> getUserPosts(@RequestAttribute("userId") String userId,
+                                                            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page ) {
+        return ResponseEntity.ok(postService.getPostsForUser(page, userId));
     }
 
     @DeleteMapping("/{postId}")

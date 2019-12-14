@@ -17,6 +17,11 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     List<Post> findAllByCategoryNameOrderByCreatedOnDesc(Pageable pageable, String categoryName);
 
-    List<Post> findAllByUserUidOrderByCreatedOnDesc(String userId);
+    List<Post> findAllByUserUidOrderByCreatedOnDesc(Pageable pageable, String userId);
 
+    long count();
+
+    long countByCategoryNameOrderByCreatedOnDesc(String categoryName);
+
+    long countByUserUid(String userId);
 }

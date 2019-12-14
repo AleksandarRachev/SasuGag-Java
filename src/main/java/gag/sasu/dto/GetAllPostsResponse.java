@@ -13,6 +13,6 @@ public class GetAllPostsResponse {
 
     List<VoteForPostResponse> posts;
 
-    int maxPosts;
+    long maxPosts;
 
 }
